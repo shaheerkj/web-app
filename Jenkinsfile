@@ -14,7 +14,7 @@ pipeline {
                         -v /var/jenkins_home/workspace/pipeline-web:/app \
                         -w /app \
                         python:3.11-slim \
-                        bash -c 'pip install flake8 --quiet && flake8 app.py --max-line-length=120'
+                        bash -c \'pip install flake8 --quiet && flake8 app.py --max-line-length=120\'
                 """
                 echo "Linting passed!"
             }
@@ -49,7 +49,7 @@ pipeline {
                         --network host \
                         -v /var/jenkins_home/workspace/pipeline-web/tests:/tests \
                         python:3.11-slim \
-                        bash -c 'pip install selenium --quiet && apt-get update -qq && apt-get install -y -qq chromium chromium-driver && python /tests/test_selenium.py'
+                        bash -c \'pip install selenium --quiet && apt-get update -qq && apt-get install -y -qq chromium chromium-driver && python /tests/test_selenium.py\'
                 """
             }
         }
