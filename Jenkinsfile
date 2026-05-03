@@ -6,19 +6,19 @@ pipeline {
         APP_PORT = "5000"
     }
     stages {
-        stage('Code Linting') {
-            steps {
-                echo 'Running Flake8 linter...'
-                sh """
-                    docker run --rm \
-                        -v /var/jenkins_home/workspace/pipeline-web:/app \
-                        -w /app \
-                        python:3.11-slim \
-			sh -c "pip install flake8 --quiet && flake8 app.py --max-line-length=120"
-                """
-                echo "Linting passed!"
-            }
-        }
+	stage('Code Linting') {
+    steps {
+        echo 'Running Flake8 linter...'
+        sh """
+            docker run --rm \
+                -v /var/jenkins_home/workspace/pipeline-web:/app \
+                -w /app \
+                python:3.11-slim \
+                /app/lint.sh
+        """
+        echo "Linting passed!"
+    }
+}
         stage('Code Build') {
             steps {
                 echo 'Building Docker image...'
@@ -41,18 +41,19 @@ pipeline {
                 sh "docker ps | grep ${CONTAINER_NAME}"
             }
         }
-        stage('Containerized Selenium Testing') {
-            steps {
-                echo 'Running Selenium tests...'
-                sh """
-                    docker run --rm \
-                        --network host \
-                        -v /var/jenkins_home/workspace/pipeline-web/tests:/tests \
-                        python:3.11-slim \
-                        sh -c "pip install selenium --quiet && apt-get update -qq && apt-get install -y -qq chromium chromium-driver && python /tests/test_selenium.py"
-                """
-            }
-        }
+	stage('Containerized Selenium Testing') {
+    steps {
+        echo 'Running Selenium tests...'
+        sh """
+            docker run --rm \
+                --network host \
+                -v /var/jenkins_home/workspace/pipeline-web/tests:/tests \
+                -v /var/jenkins_home/workspace/pipeline-web/run_tests.sh:/run_tests.sh \
+                python:3.11-slim \
+                /run_tests.sh
+        """
+    }
+}	
     }
     post {
         success {
