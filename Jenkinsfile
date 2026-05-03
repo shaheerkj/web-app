@@ -10,18 +10,18 @@ pipeline {
     stages {
 
         stage('Code Linting') {
-            steps {
-                echo '🔍 Running Flake8 linter...'
-                sh '''
-                docker run --rm \
-                -v $(pwd):/app \
+    steps {
+        echo '🔍 Running Flake8 linter...'
+        sh '''
+            docker run --rm \
+                -v "$WORKSPACE":/app \
                 -w /app \
                 python:3.11-slim \
                 bash -c "pip install flake8 --quiet && flake8 app.py --max-line-length=120 --ignore=E501,W503"
-                '''
-                echo "Linting passed!"
-            }    
-        }
+        '''
+        echo "Linting passed!"
+    }
+}
 
         stage('Code Build') {
             steps {
