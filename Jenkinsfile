@@ -11,7 +11,7 @@ pipeline {
         echo 'Running Flake8 linter...'
         sh """
             docker run --rm \
-                -v /var/jenkins_home/workspace/pipeline-web:/app \
+                -v /var/lib/docker/volumes/jenkins_data/_data/workspace/pipeline-web:/app \
                 -w /app \
                 python:3.11-slim \
                 /app/lint.sh
@@ -47,13 +47,12 @@ pipeline {
         sh """
             docker run --rm \
                 --network host \
-                -v /var/jenkins_home/workspace/pipeline-web/tests:/tests \
-                -v /var/jenkins_home/workspace/pipeline-web/run_tests.sh:/run_tests.sh \
+                -v /var/lib/docker/volumes/jenkins_data/_data/workspace/pipeline-web:/app \
                 python:3.11-slim \
-                /run_tests.sh
+                /app/run_tests.sh
         """
     }
-}	
+}
     }
     post {
         success {
